@@ -27,15 +27,13 @@ jobs:
       - name: Create environment file
         run: |
           echo "HEDERA_NETWORK=testnet" >> .env
-          echo "HEDERA_OPERATOR_ID=${{ secrets.HEDERA_OPERATOR_ID }}" >> .env
-          echo "HEDERA_OPERATOR_KEY=${{ secrets.HEDERA_OPERATOR_KEY }}" >> .env
         
       - name: Run tests
         run: yarn test
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
