@@ -1,5 +1,5 @@
-import { Given, Then, When } from "@cucumber/cucumber";
-import { accounts } from "../../src/config";
+import { Given, Then, When } from '@cucumber/cucumber';
+import { accounts } from '../../src/config';
 import {
   AccountBalanceQuery,
   Hbar,
@@ -15,9 +15,9 @@ import {
   TokenMintTransaction,
   TokenType,
   TokenId,
-} from "@hashgraph/sdk";
-import assert from "node:assert";
-import { Long } from "@hashgraph/sdk/lib/long";
+} from '@hashgraph/sdk';
+import assert from 'node:assert';
+import { Long } from '@hashgraph/sdk/lib/long';
 
 // Type definitions for Token context
 interface TokenContext {
@@ -49,19 +49,6 @@ interface TokenContext {
   thirdAccountTokenBalance?: number;
   fourthAccountHbarBalance?: number;
   fourthAccountTokenBalance?: number;
-  
-}
-
-interface BalanceApiResponse {
-  timestamp: string;
-  balances: Array<{
-    account: string;
-    balance: number;
-    decimals: number;
-  }>;
-  links: {
-    next: string | null;
-  };
 }
 
 // Initialize Hedera client for testnet
@@ -78,9 +65,12 @@ client.setOperator(clientID, clientPrivateKey);
  * @returns The transaction receipt
  */
 export async function signAndExecuteTransaction(
-  transaction: TokenCreateTransaction | TokenMintTransaction | TransferTransaction, 
-  signerKey: PrivateKey, 
-  clientToUse: Client,
+  transaction:
+    | TokenCreateTransaction
+    | TokenMintTransaction
+    | TransferTransaction,
+  signerKey: PrivateKey,
+  clientToUse: Client
 ): Promise<TransactionReceipt> {
   try {
     const signedTx = await transaction.sign(signerKey);
@@ -88,7 +78,9 @@ export async function signAndExecuteTransaction(
     const receipt = await txResponse.getReceipt(clientToUse);
     return receipt;
   } catch (error: unknown) {
-    console.error(`Transaction signing/execution failed: ${(error as Error).message}`);
+    console.error(
+      `Transaction signing/execution failed: ${(error as Error).message}`
+    );
     throw error;
   }
 }
@@ -150,12 +142,12 @@ When(
   async function (this: TokenContext) {
     try {
       if (!this.account_id || !this.privateKey) {
-        throw new Error("Account ID or private key is not defined");
+        throw new Error('Account ID or private key is not defined');
       }
 
       const transaction = await new TokenCreateTransaction()
-        .setTokenName("Test Token")
-        .setTokenSymbol("HTT")
+        .setTokenName('Test Token')
+        .setTokenSymbol('HTT')
         .setTokenType(TokenType.FungibleCommon)
         .setDecimals(2)
         .setInitialSupply(0)
@@ -171,7 +163,7 @@ When(
       if (receipt.tokenId) {
         this.tokenId = receipt.tokenId;
       } else {
-        throw new Error("Token ID is null");
+        throw new Error('Token ID is null');
       }
 
       console.log(`Created mintable token with ID: ${this.tokenId}`);
@@ -188,7 +180,7 @@ Then(
     try {
       if (!this.tokenId) {
         throw new Error(
-          "Token ID is not defined. Cannot fetch token information."
+          'Token ID is not defined. Cannot fetch token information.'
         );
       }
 
@@ -214,7 +206,7 @@ Then(
   async function (this: TokenContext, expectedSymbol: string) {
     try {
       if (!this.tokenId) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
       const tokenInfo = await new TokenInfoQuery()
         .setTokenId(this.tokenId)
@@ -235,7 +227,7 @@ Then(
   async function (this: TokenContext, expectedDecimals: number) {
     try {
       if (!this.tokenId) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
       const tokenInfo = await new TokenInfoQuery()
         .setTokenId(this.tokenId)
@@ -256,7 +248,7 @@ Then(
   async function (this: TokenContext) {
     try {
       if (!this.tokenId || !this.account_id) {
-        throw new Error("Token ID or account ID is not defined");
+        throw new Error('Token ID or account ID is not defined');
       }
 
       const tokenInfo = await new TokenInfoQuery()
@@ -267,7 +259,7 @@ Then(
         assert.strictEqual(
           tokenInfo.treasuryAccountId.toString(),
           this.account_id.toString(),
-          "The token is not owned by the account"
+          'The token is not owned by the account'
         );
 
         // Store tokenId to tokenId1 before resetting
@@ -278,7 +270,7 @@ Then(
           `Token ownership verified: treasury is ${tokenInfo.treasuryAccountId}`
         );
       } else {
-        throw new Error("Token treasuryAccountId is null.");
+        throw new Error('Token treasuryAccountId is null.');
       }
     } catch (error: unknown) {
       console.error(
@@ -294,7 +286,7 @@ Then(
   async function (this: TokenContext, amount: number) {
     try {
       if (!this.tokenId1) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       const mintTransaction = await new TokenMintTransaction()
@@ -310,8 +302,8 @@ Then(
 
       assert.strictEqual(
         receipt.status.toString(),
-        "SUCCESS",
-        "Minting failed."
+        'SUCCESS',
+        'Minting failed.'
       );
       console.log(`Successfully minted ${amount} tokens`);
     } catch (error: unknown) {
@@ -327,12 +319,12 @@ When(
   async function (this: TokenContext, supply: number) {
     try {
       if (!this.account_id || !this.privateKey) {
-        throw new Error("Account ID or private key is not defined");
+        throw new Error('Account ID or private key is not defined');
       }
 
       const transaction = await new TokenCreateTransaction()
-        .setTokenName("Test Token")
-        .setTokenSymbol("HTT")
+        .setTokenName('Test Token')
+        .setTokenSymbol('HTT')
         .setDecimals(2)
         .setInitialSupply(supply)
         .setTreasuryAccountId(this.account_id)
@@ -347,7 +339,7 @@ When(
         this.tokenId_fixed_supply = receipt.tokenId;
         this.tokenId = this.tokenId_fixed_supply;
       } else {
-        throw new Error("Token ID is null");
+        throw new Error('Token ID is null');
       }
       console.log(
         `Fixed supply token created with ID: ${this.tokenId_fixed_supply.toString()}`
@@ -366,7 +358,7 @@ Then(
   async function (this: TokenContext, expectedSupply: number) {
     try {
       if (!this.tokenId_fixed_supply) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       const tokenInfo = await new TokenInfoQuery()
@@ -394,7 +386,7 @@ Then(
   async function (this: TokenContext) {
     try {
       if (!this.tokenId_fixed_supply || !this.privateKey) {
-        throw new Error("Token ID or private key is not defined");
+        throw new Error('Token ID or private key is not defined');
       }
 
       const mintTransaction = new TokenMintTransaction()
@@ -409,12 +401,12 @@ Then(
       );
       assert.strictEqual(
         receipt.status.toString(),
-        "TOKEN_SUPPLY_EXCEEDED",
-        "Minting should have failed."
+        'TOKEN_SUPPLY_EXCEEDED',
+        'Minting should have failed.'
       );
-      console.log("Minting attempt succeeded unexpectedly");
+      console.log('Minting attempt succeeded unexpectedly');
     } catch (error: unknown) {
-      console.log("Minting attempt failed as expected:", error);
+      console.log('Minting attempt failed as expected:', error);
     }
   }
 );
@@ -441,7 +433,7 @@ Given(
       if (getReceipt.accountId) {
         this.firstAccountId = getReceipt.accountId;
       } else {
-        throw new Error("Failed to create account: accountId is null");
+        throw new Error('Failed to create account: accountId is null');
       }
 
       // Check the account balance
@@ -490,7 +482,7 @@ Given(/^A second Hedera account$/, async function (this: TokenContext) {
     if (getReceipt.accountId) {
       this.secondAccountId = getReceipt.accountId;
     } else {
-      throw new Error("Failed to create second account: accountId is null");
+      throw new Error('Failed to create second account: accountId is null');
     }
 
     console.log(`Second account created with ID: ${this.secondAccountId}`);
@@ -511,8 +503,8 @@ Given(
     try {
       // Create a transaction for the token creation on the Hedera network
       const transaction = await new TokenCreateTransaction()
-        .setTokenName("Test Token")
-        .setTokenSymbol("HTT")
+        .setTokenName('Test Token')
+        .setTokenSymbol('HTT')
         .setTokenType(TokenType.FungibleCommon)
         .setDecimals(0)
         .setInitialSupply(supply)
@@ -555,7 +547,7 @@ Given(
   async function (this: TokenContext, expectedAmount: number) {
     try {
       if (!this.firstAccountId || !this.tokenId_1) {
-        throw new Error("First account ID or token ID is not defined");
+        throw new Error('First account ID or token ID is not defined');
       }
 
       // Check initial balance
@@ -605,7 +597,7 @@ Given(
   async function (this: TokenContext, expectedAmount: number) {
     try {
       if (!this.secondAccountId || !this.tokenId_1) {
-        throw new Error("Second account ID or token ID is not defined");
+        throw new Error('Second account ID or token ID is not defined');
       }
 
       // Check initial balance of the second account
@@ -661,7 +653,7 @@ When(
   async function (this: TokenContext, amount: number) {
     try {
       if (!this.firstAccountId || !this.secondAccountId || !this.tokenId_1) {
-        throw new Error("Account IDs or token ID is not defined");
+        throw new Error('Account IDs or token ID is not defined');
       }
 
       // Create a transfer transaction to transfer tokens from the first account to the second
@@ -687,25 +679,26 @@ When(
   async function (this: TokenContext) {
     try {
       if (!this.transferTransaction) {
-        throw new Error("No transfer transaction has been created");
+        throw new Error('No transfer transaction has been created');
       }
 
       if (!this.firstAccountPrivateKey && !this.newAccountPrivateKey) {
-        throw new Error("First account private key is not defined");
+        throw new Error('First account private key is not defined');
       }
 
       // Sign with the first account's private key
-      const privateKey = this.firstAccountPrivateKey || this.newAccountPrivateKey;
+      const privateKey =
+        this.firstAccountPrivateKey || this.newAccountPrivateKey;
 
       const receipt = await signAndExecuteTransaction(
         this.transferTransaction,
-        privateKey!!,
+        privateKey!,
         client
       );
       assert.strictEqual(
         receipt.status.toString(),
-        "SUCCESS",
-        "Transaction failed"
+        'SUCCESS',
+        'Transaction failed'
       );
     } catch (error: unknown) {
       console.error(
@@ -722,7 +715,7 @@ When(
   async function (this: TokenContext, amount: number) {
     try {
       if (!this.firstAccountId || !this.secondAccountId || !this.tokenId_1) {
-        throw new Error("Account IDs or token ID is not defined");
+        throw new Error('Account IDs or token ID is not defined');
       }
 
       // Check Hbar balance of the first account before the transfer
@@ -744,7 +737,7 @@ When(
 
       // Sign the transaction with the second account's key
       if (!this.secondAccountPrivateKey) {
-        throw new Error("Second account private key is not defined");
+        throw new Error('Second account private key is not defined');
       }
 
       this.transferTransaction = await this.transferTransaction.sign(
@@ -770,7 +763,7 @@ Then(
     try {
       if (!this.firstAccountId || !this.initialHbarBalance) {
         throw new Error(
-          "First account ID or initial Hbar balance is not defined"
+          'First account ID or initial Hbar balance is not defined'
         );
       }
 
@@ -788,10 +781,10 @@ Then(
       assert.strictEqual(
         finalHbarBalance.toString(),
         this.initialHbarBalance.toString(),
-        "The first account has not paid for the transaction fee"
+        'The first account has not paid for the transaction fee'
       );
 
-      console.log("First account has paid for the transaction fee");
+      console.log('First account has paid for the transaction fee');
     } catch (error: unknown) {
       console.error(
         `Error verifying transaction fee payment: ${(error as Error).message}`
@@ -813,7 +806,7 @@ Given(
     try {
       this.tokenId1 = this.tokenId_1;
       if (!this.tokenId1) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       // Generate a new ED25519 key pair
@@ -832,7 +825,7 @@ Given(
       if (receipt.accountId) {
         this.newAccountId = receipt.accountId;
       } else {
-        throw new Error("Failed to create account: accountId is null");
+        throw new Error('Failed to create account: accountId is null');
       }
       this.firstAccountId = this.newAccountId;
 
@@ -851,6 +844,7 @@ Given(
       // Get the transaction receipt
       const transferReceipt = await tokenTransferSubmit.getReceipt(client);
 
+      console.log('Transfer transaction receipt:', transferReceipt);
       console.log(
         `${expectedAmount2} tokens transferred to account ${this.newAccountId}`
       );
@@ -885,7 +879,7 @@ Given(
       }
 
       if (!this.tokenId1) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       // Create a new ED25519 key pair
@@ -904,7 +898,7 @@ Given(
       if (receipt.accountId) {
         this.secondAccountId = receipt.accountId;
       } else {
-        throw new Error("Failed to create second account: accountId is null");
+        throw new Error('Failed to create second account: accountId is null');
       }
 
       console.log(`Second account created with ID: ${this.secondAccountId}`);
@@ -948,7 +942,7 @@ Given(
       }
 
       if (!this.tokenId1) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       // Create a new ED25519 key pair
@@ -967,7 +961,7 @@ Given(
       if (receipt.accountId) {
         this.thirdAccountId = receipt.accountId;
       } else {
-        throw new Error("Failed to create account: accountId is null");
+        throw new Error('Failed to create account: accountId is null');
       }
 
       console.log(`Third account created with ID: ${this.thirdAccountId}`);
@@ -1011,7 +1005,7 @@ Given(
       }
 
       if (!this.tokenId1) {
-        throw new Error("Token ID is not defined");
+        throw new Error('Token ID is not defined');
       }
 
       // Create a new ED25519 key pair
@@ -1030,7 +1024,7 @@ Given(
       if (receipt.accountId) {
         this.fourthAccountId = receipt.accountId;
       } else {
-        throw new Error("Failed to create fourth account: accountId is null");
+        throw new Error('Failed to create fourth account: accountId is null');
       }
 
       console.log(`Fourth account created with ID: ${this.fourthAccountId}`);
@@ -1079,7 +1073,7 @@ When(
         !this.thirdAccountId ||
         !this.fourthAccountId
       ) {
-        throw new Error("Required account IDs or token ID is not defined");
+        throw new Error('Required account IDs or token ID is not defined');
       }
 
       // Calculate how much to take from the second account to ensure the sums match
@@ -1098,14 +1092,14 @@ When(
         .freezeWith(client);
 
       if (!this.secondAccountPrivateKey) {
-        throw new Error("Second account private key is not defined");
+        throw new Error('Second account private key is not defined');
       }
 
       // Sign with the second account's key (multi-signature transaction)
       this.transferTransaction = await this.transferTransaction.sign(
         this.secondAccountPrivateKey
       );
-      console.log("Transaction created and signed by second account");
+      console.log('Transaction created and signed by second account');
     } catch (error: unknown) {
       console.error(
         `Error creating multi-party transfer transaction: ${
@@ -1122,7 +1116,7 @@ Then(
   async function (this: TokenContext, expectedAmount: number) {
     try {
       if (!this.thirdAccountId || !this.tokenId1) {
-        throw new Error("Third account ID or token ID is not defined");
+        throw new Error('Third account ID or token ID is not defined');
       }
 
       // Check the token balance of the third account
@@ -1131,7 +1125,7 @@ Then(
         .execute(client);
 
       if (!accountBalance.tokens) {
-        throw new Error("No token balance found for the third account");
+        throw new Error('No token balance found for the third account');
       }
 
       const tokenBalance =
@@ -1159,7 +1153,7 @@ Then(
   async function (this: TokenContext, expectedAmount: number) {
     try {
       if (!this.fourthAccountId || !this.tokenId1) {
-        throw new Error("Fourth account ID or token ID is not defined");
+        throw new Error('Fourth account ID or token ID is not defined');
       }
 
       // Check the token balance of the fourth account
@@ -1168,7 +1162,7 @@ Then(
         .execute(client);
 
       if (!accountBalance.tokens) {
-        throw new Error("No token balance found for the fourth account");
+        throw new Error('No token balance found for the fourth account');
       }
 
       const tokenBalance =
