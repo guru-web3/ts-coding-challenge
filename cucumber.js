@@ -1,11 +1,17 @@
-let common = [
-    'features/**/*.feature',
-    '--require-module ts-node/register', //typescript cucumber
-    '--require ./features/step_definitions/**/*.ts',
-    '--format progress-bar',
-    `--format-options '{"snippetInterface": "synchronous"}'`
-].join(' ');
-
+/* eslint-disable */
 module.exports = {
-    default: common
-}
+  default: {
+    formatOptions: {
+      snippetInterface: 'async-await',
+    },
+    paths: ['features/**/*.feature'],
+    require: ['features/step_definitions/**/*.ts'],
+    format: [
+      'progress-bar',
+      'html:cucumber-report.html',
+      'json:test-results/cucumber-report.json',
+    ],
+    publishQuiet: true,
+    requireModule: ['ts-node/register'],
+  },
+};
