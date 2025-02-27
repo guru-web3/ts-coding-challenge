@@ -14,7 +14,7 @@
 
 ![screencapture-file-Users-gururamu-Downloads-test-results-1-cucumber-report-html-2025-02-28-04_01_32](https://github.com/user-attachments/assets/0c353ff9-3166-4d50-85ec-17edbb541d2a)
 
-We have set up a CI/CD pipeline using GitHub Actions to automate the testing and code quality checks. The pipeline is defined in the `.github/workflows/dev.yml` file and includes the following jobs:
+We have set up a CI/CD pipeline using GitHub Actions to automate the testing and code quality checks. The pipeline is defined in the `.github/workflows/ci.yml` file and includes the following jobs:
 
 1. **Run Integration Tests**:
 

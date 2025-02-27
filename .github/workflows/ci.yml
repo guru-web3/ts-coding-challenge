@@ -2,7 +2,7 @@ name: Hedera Integration Tests
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, main ]
   pull_request:
     branches: [ main ]
 
@@ -30,6 +30,7 @@ jobs:
         
       - name: Run tests
         run: yarn test:dev
+        # run: yarn test
 
       - name: Upload test results
         if: always()
