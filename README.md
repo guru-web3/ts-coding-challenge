@@ -2,6 +2,9 @@
 
 This coding challenge uses [Cucumber](https://cucumber.io/) to run tests which implement a hypothetical use-case for Hedera SDK.
 
+![screencapture-file-Users-gururamu-Downloads-test-results-1-cucumber-report-html-2025-02-28-04_01_32](https://github.com/user-attachments/assets/0c353ff9-3166-4d50-85ec-17edbb541d2a)
+
+
 ## How to Solve It
 
 ### 1. Fork the Repository
