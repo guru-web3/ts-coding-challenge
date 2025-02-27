@@ -1,6 +1,5 @@
 # tha-coding-challenge
 
-
 ## Approach and CI/CD Pipeline
 
 ### Approach
@@ -16,6 +15,7 @@
 We have set up a CI/CD pipeline using GitHub Actions to automate the testing and code quality checks. The pipeline is defined in the `.github/workflows/dev.yml` file and includes the following jobs:
 
 1. **Run Integration Tests**:
+
    - **Checkout Code**: Checks out the code from the repository.
    - **Setup Node.js**: Sets up the Node.js environment.
    - **Install Dependencies**: Installs the project dependencies using Yarn.
@@ -33,8 +33,6 @@ We have set up a CI/CD pipeline using GitHub Actions to automate the testing and
 This pipeline ensures that every push and pull request is automatically tested and checked for code quality, providing immediate feedback on the changes.
 
 By following this approach and utilizing the CI/CD pipeline, you can ensure that your code meets the required standards and passes all tests before merging it into the main branch.
-
-
 
 This coding challenge uses [Cucumber](https://cucumber.io/) to run tests which implement a hypothetical use-case for Hedera SDK.
 
