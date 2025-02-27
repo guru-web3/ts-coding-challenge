@@ -29,8 +29,8 @@ jobs:
           echo "HEDERA_NETWORK=testnet" >> .env
         
       - name: Run tests
-        run: yarn test:dev
-        # run: yarn test
+        # run: yarn test:dev
+        run: yarn test
 
       - name: Upload test results
         if: always()
