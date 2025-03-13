@@ -5,7 +5,7 @@ import {
   Hbar,
   HbarUnit,
   PrivateKey,
-  TokenId
+  TokenId,
 } from '@hashgraph/sdk';
 import { client } from '../utils/client';
 import assert from 'node:assert';
@@ -41,7 +41,7 @@ export async function verifyAccountBalance(
  * Creates a new Hedera account with specified initial balance
  */
 export async function createAccount(
-  initialBalance: number, 
+  initialBalance: number,
   maxTokenAssociations = 10
 ): Promise<{ accountId: AccountId; privateKey: PrivateKey }> {
   // Generate a new ED25519 key pair
@@ -56,16 +56,16 @@ export async function createAccount(
     .execute(client);
 
   const receipt = await transaction.getReceipt(client);
-  
+
   if (!receipt.accountId) {
     throw new Error('Failed to create account: accountId is null');
   }
 
   logWithTimestamp(`Created account with ID: ${receipt.accountId}`);
-  
+
   return {
     accountId: receipt.accountId,
-    privateKey: privateKey
+    privateKey: privateKey,
   };
 }
 

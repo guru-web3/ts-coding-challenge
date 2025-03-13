@@ -3,7 +3,7 @@ import {
   AccountId,
   TokenId,
   PrivateKey,
-  TransactionReceipt
+  TransactionReceipt,
 } from '@hashgraph/sdk';
 import { client } from '../utils/client';
 import { signAndExecuteTransaction, logWithTimestamp } from '../utils/helpers';
@@ -28,20 +28,20 @@ export async function createTokenTransfer(
  */
 export async function createMultiPartyTokenTransfer(
   tokenId: TokenId,
-  transfers: { accountId: AccountId, amount: number }[]
+  transfers: { accountId: AccountId; amount: number }[]
 ): Promise<TransferTransaction> {
   const transaction = new TransferTransaction();
-  
+
   // Validate that transfers sum to zero
   const sum = transfers.reduce((acc, transfer) => acc + transfer.amount, 0);
   if (Math.abs(sum) > 0.001) {
     throw new Error(`Transfer amounts must sum to zero, got ${sum}`);
   }
-  
+
   for (const transfer of transfers) {
     transaction.addTokenTransfer(tokenId, transfer.accountId, transfer.amount);
   }
-  
+
   return transaction.freezeWith(client);
 }
 
@@ -49,10 +49,14 @@ export async function createMultiPartyTokenTransfer(
  * Executes a transaction with the specified signer
  */
 export async function executeTransaction(
-  transaction: TransferTransaction, 
+  transaction: TransferTransaction,
   signerKey: PrivateKey
 ): Promise<TransactionReceipt> {
-  const receipt = await signAndExecuteTransaction(transaction, signerKey, client);
+  const receipt = await signAndExecuteTransaction(
+    transaction,
+    signerKey,
+    client
+  );
   logWithTimestamp(`Transaction executed with status: ${receipt.status}`);
   return receipt;
 }

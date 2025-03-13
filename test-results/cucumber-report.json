@@ -1,0 +1,683 @@
+[
+  {
+    "description": "  Demonstration of the understanding of the Hedera Hashgraph Token Service and transaction model",
+    "elements": [
+      {
+        "description": "",
+        "id": "token-service-use-cases;create-a-mintable-token",
+        "keyword": "Scenario",
+        "line": 5,
+        "name": "Create a mintable token",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "A Hedera account with more than 10 hbar",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 589039084
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I create a token named Test Token (HTT)",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:70"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2037479125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "The token has the name \"Test Token\"",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:95"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 921257791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "The token has the symbol \"HTT\"",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:118"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 661907874
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "The token has 2 decimals",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:135"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 869016875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "The token is owned by the account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:152"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 922194749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 12,
+            "name": "An attempt to mint 100 additional tokens succeeds",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:184"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1624942375
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@wip",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "token-service-use-cases;create-a-fixed-supply-token",
+        "keyword": "Scenario",
+        "line": 14,
+        "name": "Create a fixed supply token",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 15,
+            "name": "A Hedera account with more than 10 hbar",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 539280290
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 16,
+            "name": "I create a fixed supply token named Test Token (HTT) with 1000 tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:208"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2748158625
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "The total supply of the token is 1000",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:234"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 611171750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "The token has the name \"Test Token\"",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:95"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 612874541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 19,
+            "name": "The token has the symbol \"HTT\"",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:118"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 818353791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 20,
+            "name": "The token has 2 decimals",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:135"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 612633292
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 21,
+            "name": "The token is owned by the account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:152"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 569956207
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 22,
+            "name": "An attempt to mint tokens fails",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:255"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2538090750
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@wip",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "token-service-use-cases;transfer-tokens-between-2-accounts",
+        "keyword": "Scenario",
+        "line": 24,
+        "name": "Transfer tokens between 2 accounts",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 25,
+            "name": "A first hedera account with more than 10 hbar",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:278"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2566213458
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 26,
+            "name": "A second Hedera account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:295"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1884871917
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 27,
+            "name": "A token named Test Token (HTT) with 1000 tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:309"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2680703999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 28,
+            "name": "The first account holds 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:330"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3351288958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "The second account holds 0 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:366"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 548482665
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 30,
+            "name": "The first account creates a transaction to transfer 10 HTT tokens to the second account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:401"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2495833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "The first account submits the transaction",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:424"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1728154167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 32,
+            "name": "The second account holds 10 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:366"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 539591124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 33,
+            "name": "The first account holds 90 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:330"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 449970709
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@wip",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "token-service-use-cases;create-a-token-transfer-transaction-paid-for-by-the-recipient",
+        "keyword": "Scenario",
+        "line": 35,
+        "name": "Create a token transfer transaction paid for by the recipient",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 36,
+            "name": "A first hedera account with more than 10 hbar",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:278"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1465809207
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 37,
+            "name": "A second Hedera account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:295"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1390021709
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 38,
+            "name": "A token named Test Token (HTT) with 1000 tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:309"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3169533791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 39,
+            "name": "The second account holds 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:366"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3068009375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 40,
+            "name": "The first account holds 0 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:330"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 221107959
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 41,
+            "name": "The second account creates a transaction to transfer 10 HTT tokens to the first account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:442"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 362614957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 42,
+            "name": "The first account submits the transaction",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:424"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2741423374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 43,
+            "name": "The second account holds 90 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:366"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 616320749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 44,
+            "name": "The first account holds 10 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:330"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 482032959
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 45,
+            "name": "The first account has paid for the transaction fee",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:479"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 336071083
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@wip",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "token-service-use-cases;create-a-multi-party-token-transfer-transaction",
+        "keyword": "Scenario",
+        "line": 47,
+        "name": "Create a multi party token transfer transaction",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 48,
+            "name": "A token named Test Token (HTT) with 1000 tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:309"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1954714291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 49,
+            "name": "A first hedera account with more than 10 hbar and 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:508"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4606036375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 50,
+            "name": "A second Hedera account with 0 hbar and 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:553"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5110392124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 51,
+            "name": "A third Hedera account with 0 hbar and 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:598"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4724303125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 52,
+            "name": "A fourth Hedera account with 0 hbar and 100 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:643"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3353010542
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 53,
+            "name": "A transaction is created to transfer 10 HTT tokens out of the first and second account and 5 HTT tokens into the third account and 15 HTT tokens into the fourth account",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:688"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12151582
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 54,
+            "name": "The first account submits the transaction",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:424"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1945866709
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 55,
+            "name": "The first account holds 90 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:330"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 922786957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 56,
+            "name": "The second account holds 90 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:366"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 412630333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 57,
+            "name": "The third account holds 105 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:728"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 271978707
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 58,
+            "name": "The fourth account holds 115 HTT tokens",
+            "match": {
+              "location": "features/step_definitions/token-service.ts:752"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 289353917
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@wip",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "token-service-use-cases",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Token Service Use Cases",
+    "tags": [
+      {
+        "name": "@wip",
+        "line": 1
+      }
+    ],
+    "uri": "features/tokens.feature"
+  }
+]

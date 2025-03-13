@@ -5,11 +5,16 @@ import {
   KeyList,
   PrivateKey,
   TopicId,
-  Timestamp
+  Timestamp,
 } from '@hashgraph/sdk';
 import assert from 'node:assert';
-import {  verifyAccountBalance } from '../../src/services/accountService';
-import { createTopic, publishMessage, waitForMessage , createAccount } from '../../src/services/topic';
+import { verifyAccountBalance } from '../../src/services/accountService';
+import {
+  createTopic,
+  publishMessage,
+  waitForMessage,
+  createAccount,
+} from '../../src/services/topic';
 import { client, clientID, clientPrivateKey } from '../../src/utils/client';
 import { logWithTimestamp } from '../../src/utils/helpers';
 
@@ -38,9 +43,13 @@ Given(
 
       // Verify the account has sufficient balance
       const balance = await verifyAccountBalance(this.account, expectedBalance);
-      logWithTimestamp(`Using account ${this.account.toString()} with ${balance} HBAR`);
+      logWithTimestamp(
+        `Using account ${this.account.toString()} with ${balance} HBAR`
+      );
     } catch (error: unknown) {
-      logWithTimestamp(`Error setting up first account: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error setting up first account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -77,7 +86,9 @@ Given(
       // Verify the balance
       await verifyAccountBalance(secondAccountId, expectedBalance);
     } catch (error: unknown) {
-      logWithTimestamp(`Error setting up second account: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error setting up second account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -89,12 +100,16 @@ Given(
     try {
       // Validate inputs
       if (totalKeys !== 2) {
-        throw new Error(`This step is designed for 2 keys, but ${totalKeys} were specified`);
+        throw new Error(
+          `This step is designed for 2 keys, but ${totalKeys} were specified`
+        );
       }
 
       // Ensure both account keys are available
       if (!this.privKey || !this.secondAccountKey) {
-        throw new Error('Keys for both first and second accounts must be set before this step');
+        throw new Error(
+          'Keys for both first and second accounts must be set before this step'
+        );
       }
 
       // Create the key list
@@ -102,9 +117,13 @@ Given(
 
       // Create the threshold key
       this.thresholdKey = new KeyList(keyList, threshold);
-      logWithTimestamp(`Threshold key ${threshold}/${totalKeys} created successfully`);
+      logWithTimestamp(
+        `Threshold key ${threshold}/${totalKeys} created successfully`
+      );
     } catch (error: unknown) {
-      logWithTimestamp(`Error creating threshold key: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error creating threshold key: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -120,10 +139,14 @@ When(
 
       // Create a new topic using the service
       this.topicId = await createTopic(memo, this.privKey);
-      
-      logWithTimestamp(`Created topic with ID: ${this.topicId?.toString()} and memo: "${memo}"`);
+
+      logWithTimestamp(
+        `Created topic with ID: ${this.topicId?.toString()} and memo: "${memo}"`
+      );
     } catch (error: unknown) {
-      logWithTimestamp(`Error creating topic with first account: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error creating topic with first account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -140,10 +163,14 @@ When(
 
       // Create a new topic using the service
       this.topicId = await createTopic(memo, this.thresholdKey);
-      
-      logWithTimestamp(`Topic created with ID: ${this.topicId?.toString()} and memo: "${memo}"`);
+
+      logWithTimestamp(
+        `Topic created with ID: ${this.topicId?.toString()} and memo: "${memo}"`
+      );
     } catch (error: unknown) {
-      logWithTimestamp(`Error creating topic with threshold key: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error creating topic with threshold key: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -159,10 +186,14 @@ When(
 
       // Publish message using the service
       this.messageTimestamp = await publishMessage(this.topicId, message);
-      
-      logWithTimestamp(`Message published to topic at ${this.messageTimestamp?.toString()}`);
+
+      logWithTimestamp(
+        `Message published to topic at ${this.messageTimestamp?.toString()}`
+      );
     } catch (error: unknown) {
-      logWithTimestamp(`Error publishing message to topic: ${(error as Error).message}`);
+      logWithTimestamp(
+        `Error publishing message to topic: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -187,7 +218,9 @@ Then(
         timeoutMs
       );
 
-      logWithTimestamp(`Successfully received expected message: "${receivedMessage}"`);
+      logWithTimestamp(
+        `Successfully received expected message: "${receivedMessage}"`
+      );
       assert.strictEqual(receivedMessage, expectedMessage);
     } catch (error: unknown) {
       logWithTimestamp(`Error receiving message: ${(error as Error).message}`);

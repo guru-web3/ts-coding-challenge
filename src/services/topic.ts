@@ -10,7 +10,7 @@ import {
   Hbar,
   AccountCreateTransaction,
   Status,
-  AccountId
+  AccountId,
 } from '@hashgraph/sdk';
 import { client } from '../utils/client';
 import { logWithTimestamp } from '../utils/helpers';
@@ -25,11 +25,13 @@ export async function createTopic(
   try {
     const transaction = new TopicCreateTransaction()
       .setTopicMemo(memo)
-      .setSubmitKey(submitKey instanceof PrivateKey ? submitKey.publicKey : submitKey);
+      .setSubmitKey(
+        submitKey instanceof PrivateKey ? submitKey.publicKey : submitKey
+      );
 
     const txResponse = await transaction.execute(client);
     const receipt = await txResponse.getReceipt(client);
-    
+
     return receipt.topicId;
   } catch (error: unknown) {
     logWithTimestamp(`Topic creation failed: ${(error as Error).message}`);
@@ -85,7 +87,9 @@ export async function waitForMessage(
           },
           (message: TopicMessage) => {
             const receivedMsg = Buffer.from(message.contents).toString('utf8');
-            logWithTimestamp(`${message.consensusTimestamp.toDate()} Received: ${receivedMsg}`);
+            logWithTimestamp(
+              `${message.consensusTimestamp.toDate()} Received: ${receivedMsg}`
+            );
 
             if (receivedMsg === expectedMessage) {
               clearTimeout(timeout);
@@ -100,7 +104,6 @@ export async function waitForMessage(
     throw error;
   }
 }
-
 
 /**
  * Creates a new account with the specified private key and initial balance

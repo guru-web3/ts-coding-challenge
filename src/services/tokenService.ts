@@ -6,7 +6,7 @@ import {
   AccountId,
   PrivateKey,
   TokenId,
-  TransactionReceipt
+  TransactionReceipt,
 } from '@hashgraph/sdk';
 import { client } from '../utils/client';
 import { signAndExecuteTransaction, logWithTimestamp } from '../utils/helpers';
@@ -32,12 +32,16 @@ export async function createMintableToken(
     .setSupplyKey(supplyKey)
     .freezeWith(client);
 
-  const receipt = await signAndExecuteTransaction(transaction, supplyKey, client);
-  
+  const receipt = await signAndExecuteTransaction(
+    transaction,
+    supplyKey,
+    client
+  );
+
   if (!receipt.tokenId) {
     throw new Error('Token ID is null');
   }
-  
+
   logWithTimestamp(`Created mintable token with ID: ${receipt.tokenId}`);
   return receipt.tokenId;
 }
@@ -61,12 +65,16 @@ export async function createFixedSupplyToken(
     .setTreasuryAccountId(treasuryId)
     .freezeWith(client);
 
-  const receipt = await signAndExecuteTransaction(transaction, adminKey, client);
-  
+  const receipt = await signAndExecuteTransaction(
+    transaction,
+    adminKey,
+    client
+  );
+
   if (!receipt.tokenId) {
     throw new Error('Token ID is null');
   }
-  
+
   logWithTimestamp(`Created fixed supply token with ID: ${receipt.tokenId}`);
   return receipt.tokenId;
 }
@@ -75,8 +83,8 @@ export async function createFixedSupplyToken(
  * Mints additional tokens
  */
 export async function mintTokens(
-  tokenId: TokenId, 
-  amount: number, 
+  tokenId: TokenId,
+  amount: number,
   supplyKey: PrivateKey
 ): Promise<TransactionReceipt> {
   const transaction = await new TokenMintTransaction()
@@ -91,7 +99,5 @@ export async function mintTokens(
  * Gets token information
  */
 export async function getTokenInfo(tokenId: TokenId) {
-  return await new TokenInfoQuery()
-    .setTokenId(tokenId)
-    .execute(client);
+  return await new TokenInfoQuery().setTokenId(tokenId).execute(client);
 }

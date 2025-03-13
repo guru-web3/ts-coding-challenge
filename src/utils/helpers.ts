@@ -2,7 +2,7 @@ import {
   Transaction,
   PrivateKey,
   Client,
-  TransactionReceipt
+  TransactionReceipt,
 } from '@hashgraph/sdk';
 
 /**
@@ -19,7 +19,9 @@ export async function signAndExecuteTransaction(
     const receipt = await txResponse.getReceipt(clientToUse);
     return receipt;
   } catch (error: unknown) {
-    console.error(`Transaction signing/execution failed: ${(error as Error).message}`);
+    console.error(
+      `Transaction signing/execution failed: ${(error as Error).message}`
+    );
     throw error;
   }
 }

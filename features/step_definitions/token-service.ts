@@ -6,14 +6,30 @@ import {
   PrivateKey,
   TokenId,
   TransferTransaction,
-  Long
+  Long,
 } from '@hashgraph/sdk';
 import assert from 'node:assert';
-import { createAccount, getTokenBalance, verifyAccountBalance } from '../../src/services/accountService';
-import { createFixedSupplyToken, createMintableToken, getTokenInfo, mintTokens } from '../../src/services/tokenService';
-import { createMultiPartyTokenTransfer, createTokenTransfer, executeTransaction } from '../../src/services/transactionService';
+import {
+  createAccount,
+  getTokenBalance,
+  verifyAccountBalance,
+} from '../../src/services/accountService';
+import {
+  createFixedSupplyToken,
+  createMintableToken,
+  getTokenInfo,
+  mintTokens,
+} from '../../src/services/tokenService';
+import {
+  createMultiPartyTokenTransfer,
+  createTokenTransfer,
+  executeTransaction,
+} from '../../src/services/transactionService';
 import { client, clientID, clientPrivateKey } from '../../src/utils/client';
-import { signAndExecuteTransaction, logWithTimestamp } from '../../src/utils/helpers';
+import {
+  signAndExecuteTransaction,
+  logWithTimestamp,
+} from '../../src/utils/helpers';
 
 // Type definitions for Token context
 interface TokenContext {
@@ -59,9 +75,13 @@ Given(
       client.setOperator(MY_ACCOUNT_ID, MY_PRIVATE_KEY);
 
       await verifyAccountBalance(MY_ACCOUNT_ID, expectedBalance);
-      logWithTimestamp(`Using account ${MY_ACCOUNT_ID} with sufficient balance`);
+      logWithTimestamp(
+        `Using account ${MY_ACCOUNT_ID} with sufficient balance`
+      );
     } catch (error: unknown) {
-      console.error(`Error setting up Hedera account: ${(error as Error).message}`);
+      console.error(
+        `Error setting up Hedera account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -74,7 +94,7 @@ When(
       if (!this.account_id || !this.privateKey) {
         throw new Error('Account ID or private key is not defined');
       }
-      
+
       this.tokenId = await createMintableToken(
         'Test Token',
         'HTT',
@@ -97,7 +117,9 @@ Then(
   async function (this: TokenContext, expectedName: string) {
     try {
       if (!this.tokenId) {
-        throw new Error('Token ID is not defined. Cannot fetch token information.');
+        throw new Error(
+          'Token ID is not defined. Cannot fetch token information.'
+        );
       }
 
       const tokenInfo = await getTokenInfo(this.tokenId);
@@ -126,7 +148,9 @@ Then(
       assert.strictEqual(tokenInfo.symbol, expectedSymbol);
       logWithTimestamp(`Token symbol verified: ${tokenInfo.symbol}`);
     } catch (error: unknown) {
-      console.error(`Error verifying token symbol: ${(error as Error).message}`);
+      console.error(
+        `Error verifying token symbol: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -143,7 +167,9 @@ Then(
       assert.strictEqual(tokenInfo.decimals, expectedDecimals);
       logWithTimestamp(`Token decimals verified: ${tokenInfo.decimals}`);
     } catch (error: unknown) {
-      console.error(`Error verifying token decimals: ${(error as Error).message}`);
+      console.error(
+        `Error verifying token decimals: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -170,12 +196,16 @@ Then(
         this.tokenId1 = this.tokenId;
         delete this.tokenId;
 
-        logWithTimestamp(`Token ownership verified: treasury is ${tokenInfo.treasuryAccountId}`);
+        logWithTimestamp(
+          `Token ownership verified: treasury is ${tokenInfo.treasuryAccountId}`
+        );
       } else {
         throw new Error('Token treasuryAccountId is null.');
       }
     } catch (error: unknown) {
-      console.error(`Error verifying token ownership: ${(error as Error).message}`);
+      console.error(
+        `Error verifying token ownership: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -190,7 +220,7 @@ Then(
       }
 
       const receipt = await mintTokens(this.tokenId1, amount, this.privateKey);
-      
+
       assert.strictEqual(
         receipt.status.toString(),
         'SUCCESS',
@@ -221,11 +251,15 @@ When(
         this.account_id,
         this.privateKey
       );
-      
+
       this.tokenId = this.tokenId_fixed_supply;
-      logWithTimestamp(`Fixed supply token created with ID: ${this.tokenId_fixed_supply.toString()}`);
+      logWithTimestamp(
+        `Fixed supply token created with ID: ${this.tokenId_fixed_supply.toString()}`
+      );
     } catch (error: unknown) {
-      console.error(`Error creating fixed supply token: ${(error as Error).message}`);
+      console.error(
+        `Error creating fixed supply token: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -244,9 +278,13 @@ Then(
         tokenInfo.totalSupply.toString(),
         expectedSupply.toString()
       );
-      logWithTimestamp(`Token total supply verified: ${tokenInfo.totalSupply.toString()}`);
+      logWithTimestamp(
+        `Token total supply verified: ${tokenInfo.totalSupply.toString()}`
+      );
     } catch (error: unknown) {
-      console.error(`Error verifying token supply: ${(error as Error).message}`);
+      console.error(
+        `Error verifying token supply: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -279,14 +317,18 @@ Given(
   /^A first hedera account with more than (\d+) hbar$/,
   async function (this: TokenContext, expectedBalance: number) {
     try {
-      const { accountId, privateKey } = await createAccount(expectedBalance + 10);
-      
+      const { accountId, privateKey } = await createAccount(
+        expectedBalance + 10
+      );
+
       this.firstAccountId = accountId;
       this.firstAccountPrivateKey = privateKey;
-      
+
       logWithTimestamp(`First account created with ID: ${this.firstAccountId}`);
     } catch (error: unknown) {
-      console.error(`Error creating first Hedera account: ${(error as Error).message}`);
+      console.error(
+        `Error creating first Hedera account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -295,13 +337,15 @@ Given(
 Given(/^A second Hedera account$/, async function (this: TokenContext) {
   try {
     const { accountId, privateKey } = await createAccount(10);
-    
+
     this.secondAccountId = accountId;
     this.secondAccountPrivateKey = privateKey;
-    
+
     logWithTimestamp(`Second account created with ID: ${this.secondAccountId}`);
   } catch (error: unknown) {
-    console.error(`Error creating second Hedera account: ${(error as Error).message}`);
+    console.error(
+      `Error creating second Hedera account: ${(error as Error).message}`
+    );
     throw error;
   }
 });
@@ -318,8 +362,10 @@ Given(
         clientID,
         clientPrivateKey
       );
-      
-      logWithTimestamp(`Created token with ID: ${this.tokenId_1} and supply: ${supply}`);
+
+      logWithTimestamp(
+        `Created token with ID: ${this.tokenId_1} and supply: ${supply}`
+      );
     } catch (error: unknown) {
       console.error(`Error creating named token: ${(error as Error).message}`);
       throw error;
@@ -337,7 +383,10 @@ Given(
       }
 
       // Check initial balance
-      let tokenBalance = await getTokenBalance(this.firstAccountId, this.tokenId_1);
+      let tokenBalance = await getTokenBalance(
+        this.firstAccountId,
+        this.tokenId_1
+      );
 
       // If the balance is not as expected, perform the transfer
       if (tokenBalance !== expectedAmount) {
@@ -348,16 +397,25 @@ Given(
           expectedAmount
         );
 
-        await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-        
+        await signAndExecuteTransaction(
+          transferTransaction,
+          clientPrivateKey,
+          client
+        );
+
         // Verify the new balance
-        tokenBalance = await getTokenBalance(this.firstAccountId, this.tokenId_1);
+        tokenBalance = await getTokenBalance(
+          this.firstAccountId,
+          this.tokenId_1
+        );
       }
 
       assert.strictEqual(tokenBalance, expectedAmount);
       logWithTimestamp(`First account now holds ${tokenBalance} HTT tokens`);
     } catch (error: unknown) {
-      console.error(`Error setting first account token balance: ${(error as Error).message}`);
+      console.error(
+        `Error setting first account token balance: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -372,7 +430,10 @@ Given(
       }
 
       // Check initial balance
-      let tokenBalance = await getTokenBalance(this.secondAccountId, this.tokenId_1);
+      let tokenBalance = await getTokenBalance(
+        this.secondAccountId,
+        this.tokenId_1
+      );
 
       // If the balance is not as expected, perform the transfer
       if (tokenBalance !== expectedAmount) {
@@ -383,16 +444,25 @@ Given(
           expectedAmount
         );
 
-        await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-        
+        await signAndExecuteTransaction(
+          transferTransaction,
+          clientPrivateKey,
+          client
+        );
+
         // Verify the new balance
-        tokenBalance = await getTokenBalance(this.secondAccountId, this.tokenId_1);
+        tokenBalance = await getTokenBalance(
+          this.secondAccountId,
+          this.tokenId_1
+        );
       }
 
       assert.strictEqual(tokenBalance, expectedAmount);
       logWithTimestamp(`Second account now holds ${tokenBalance} HTT tokens`);
     } catch (error: unknown) {
-      console.error(`Error setting second account token balance: ${(error as Error).message}`);
+      console.error(
+        `Error setting second account token balance: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -413,9 +483,13 @@ When(
         amount
       );
 
-      logWithTimestamp(`Transaction created to transfer ${amount} HTT tokens from first to second account`);
+      logWithTimestamp(
+        `Transaction created to transfer ${amount} HTT tokens from first to second account`
+      );
     } catch (error: unknown) {
-      console.error(`Error creating transfer transaction: ${(error as Error).message}`);
+      console.error(
+        `Error creating transfer transaction: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -426,13 +500,20 @@ When(
   async function (this: TokenContext) {
     try {
       if (!this.transferTransaction || !this.firstAccountPrivateKey) {
-        throw new Error('Transfer transaction or first account private key is not defined');
+        throw new Error(
+          'Transfer transaction or first account private key is not defined'
+        );
       }
 
-      await executeTransaction(this.transferTransaction, this.firstAccountPrivateKey);
+      await executeTransaction(
+        this.transferTransaction,
+        this.firstAccountPrivateKey
+      );
       logWithTimestamp('Transaction submitted successfully');
     } catch (error: unknown) {
-      console.error(`Error submitting transaction: ${(error as Error).message}`);
+      console.error(
+        `Error submitting transaction: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -450,8 +531,10 @@ When(
       // Get initial balance of first account
       const initialBalance = await verifyAccountBalance(this.firstAccountId);
       this.initialHbarBalance = Long.fromNumber(initialBalance * 100_000_000);
-      
-      logWithTimestamp(`Initial Hbar balance of the first account: ${this.initialHbarBalance.toString()}`);
+
+      logWithTimestamp(
+        `Initial Hbar balance of the first account: ${this.initialHbarBalance.toString()}`
+      );
 
       // Create the transfer transaction
       this.transferTransaction = await createTokenTransfer(
@@ -465,12 +548,18 @@ When(
       if (!this.secondAccountPrivateKey) {
         throw new Error('Second account private key is not defined');
       }
-      
-      this.transferTransaction = await this.transferTransaction.sign(this.secondAccountPrivateKey);
-      
-      logWithTimestamp(`Transaction created by second account to transfer ${amount} HTT tokens to first account`);
+
+      this.transferTransaction = await this.transferTransaction.sign(
+        this.secondAccountPrivateKey
+      );
+
+      logWithTimestamp(
+        `Transaction created by second account to transfer ${amount} HTT tokens to first account`
+      );
     } catch (error: unknown) {
-      console.error(`Error creating transfer transaction from second account: ${(error as Error).message}`);
+      console.error(
+        `Error creating transfer transaction from second account: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -481,14 +570,18 @@ Then(
   async function (this: TokenContext) {
     try {
       if (!this.firstAccountId || !this.initialHbarBalance) {
-        throw new Error('First account ID or initial Hbar balance is not defined');
+        throw new Error(
+          'First account ID or initial Hbar balance is not defined'
+        );
       }
 
       // Check final balance
       const finalBalance = await verifyAccountBalance(this.firstAccountId);
       const finalHbarBalance = Long.fromNumber(finalBalance * 100_000_000);
-      
-      logWithTimestamp(`Final Hbar balance of the first account: ${finalHbarBalance.toString()}`);
+
+      logWithTimestamp(
+        `Final Hbar balance of the first account: ${finalHbarBalance.toString()}`
+      );
 
       assert.strictEqual(
         finalHbarBalance.toString(),
@@ -498,7 +591,9 @@ Then(
 
       logWithTimestamp('First account has paid for the transaction fee');
     } catch (error: unknown) {
-      console.error(`Error verifying transaction fee payment: ${(error as Error).message}`);
+      console.error(
+        `Error verifying transaction fee payment: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -508,23 +603,30 @@ Then(
 Given(
   /^A first hedera account with more than (\d+) hbar and (\d+) HTT tokens$/,
   { timeout: 60000 },
-  async function (this: TokenContext, expectedAmount1: number, expectedAmount2: number) {
+  async function (
+    this: TokenContext,
+    expectedAmount1: number,
+    expectedAmount2: number
+  ) {
     try {
       // Create a new account with sufficient balance
-      const { accountId, privateKey } = await createAccount(expectedAmount1 + 10, 10);
+      const { accountId, privateKey } = await createAccount(
+        expectedAmount1 + 10,
+        10
+      );
       this.newAccountId = accountId;
       this.firstAccountId = accountId;
       this.newAccountPrivateKey = privateKey;
       this.firstAccountPrivateKey = privateKey;
-      
+
       logWithTimestamp(`New account created with ID: ${this.newAccountId}`);
-      
+
       // Use existing token or create one if needed
       this.tokenId1 = this.tokenId_1;
       if (!this.tokenId1) {
         throw new Error('Token ID is not defined');
       }
-      
+
       // Transfer tokens to the new account
       const transferTransaction = await createTokenTransfer(
         this.tokenId1,
@@ -532,19 +634,30 @@ Given(
         this.newAccountId,
         expectedAmount2
       );
-      
-      await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-      
+
+      await signAndExecuteTransaction(
+        transferTransaction,
+        clientPrivateKey,
+        client
+      );
+
       // Verify token balance
-      const tokenBalance = await getTokenBalance(this.newAccountId, this.tokenId1);
+      const tokenBalance = await getTokenBalance(
+        this.newAccountId,
+        this.tokenId1
+      );
       assert.strictEqual(tokenBalance, expectedAmount2);
-      
-      logWithTimestamp(`${expectedAmount2} tokens transferred to account ${this.newAccountId}`);
-      
+
+      logWithTimestamp(
+        `${expectedAmount2} tokens transferred to account ${this.newAccountId}`
+      );
+
       this.expectedHbarBalance = expectedAmount1;
       this.expectedTokenBalance = expectedAmount2;
     } catch (error: unknown) {
-      console.error(`Error setting up first account with tokens: ${(error as Error).message}`);
+      console.error(
+        `Error setting up first account with tokens: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -558,18 +671,20 @@ Given(
       if (!this.tokenId1) {
         this.tokenId1 = this.tokenId_1; // Use tokenId_1 if tokenId1 is not set
       }
-      
+
       if (!this.tokenId1) {
         throw new Error('Token ID is not defined');
       }
-      
+
       // Create a new account with specified balance
       const { accountId, privateKey } = await createAccount(hbarAmount, 10);
       this.secondAccountId = accountId;
       this.secondAccountPrivateKey = privateKey;
-      
-      logWithTimestamp(`Second account created with ID: ${this.secondAccountId}`);
-      
+
+      logWithTimestamp(
+        `Second account created with ID: ${this.secondAccountId}`
+      );
+
       // Transfer tokens to the second account
       const transferTransaction = await createTokenTransfer(
         this.tokenId1,
@@ -577,19 +692,30 @@ Given(
         this.secondAccountId,
         tokenAmount
       );
-      
-      await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-      
+
+      await signAndExecuteTransaction(
+        transferTransaction,
+        clientPrivateKey,
+        client
+      );
+
       // Verify token balance
-      const tokenBalance = await getTokenBalance(this.secondAccountId, this.tokenId1);
+      const tokenBalance = await getTokenBalance(
+        this.secondAccountId,
+        this.tokenId1
+      );
       assert.strictEqual(tokenBalance, tokenAmount);
-      
-      logWithTimestamp(`${tokenAmount} HTT tokens transferred to account ${this.secondAccountId}`);
-      
+
+      logWithTimestamp(
+        `${tokenAmount} HTT tokens transferred to account ${this.secondAccountId}`
+      );
+
       this.secondAccountHbarBalance = hbarAmount;
       this.secondAccountTokenBalance = tokenAmount;
     } catch (error: unknown) {
-      console.error(`Error setting up second account with tokens: ${(error as Error).message}`);
+      console.error(
+        `Error setting up second account with tokens: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -603,18 +729,18 @@ Given(
       if (!this.tokenId1) {
         this.tokenId1 = this.tokenId_1; // Use tokenId_1 if tokenId1 is not set
       }
-      
+
       if (!this.tokenId1) {
         throw new Error('Token ID is not defined');
       }
-      
+
       // Create a new account with specified balance
       const { accountId, privateKey } = await createAccount(hbarAmount, 10);
       this.thirdAccountId = accountId;
       this.thirdAccountPrivateKey = privateKey;
-      
+
       logWithTimestamp(`Third account created with ID: ${this.thirdAccountId}`);
-      
+
       // Transfer tokens to the third account
       const transferTransaction = await createTokenTransfer(
         this.tokenId1,
@@ -622,19 +748,30 @@ Given(
         this.thirdAccountId,
         tokenAmount
       );
-      
-      await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-      
+
+      await signAndExecuteTransaction(
+        transferTransaction,
+        clientPrivateKey,
+        client
+      );
+
       // Verify token balance
-      const tokenBalance = await getTokenBalance(this.thirdAccountId, this.tokenId1);
+      const tokenBalance = await getTokenBalance(
+        this.thirdAccountId,
+        this.tokenId1
+      );
       assert.strictEqual(tokenBalance, tokenAmount);
-      
-      logWithTimestamp(`${tokenAmount} HTT tokens transferred to account ${this.thirdAccountId}`);
-      
+
+      logWithTimestamp(
+        `${tokenAmount} HTT tokens transferred to account ${this.thirdAccountId}`
+      );
+
       this.thirdAccountHbarBalance = hbarAmount;
       this.thirdAccountTokenBalance = tokenAmount;
     } catch (error: unknown) {
-      console.error(`Error setting up third account with tokens: ${(error as Error).message}`);
+      console.error(
+        `Error setting up third account with tokens: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -648,18 +785,20 @@ Given(
       if (!this.tokenId1) {
         this.tokenId1 = this.tokenId_1; // Use tokenId_1 if tokenId1 is not set
       }
-      
+
       if (!this.tokenId1) {
         throw new Error('Token ID is not defined');
       }
-      
+
       // Create a new account with specified balance
       const { accountId, privateKey } = await createAccount(hbarAmount, 10);
       this.fourthAccountId = accountId;
       this.fourthAccountPrivateKey = privateKey;
-      
-      logWithTimestamp(`Fourth account created with ID: ${this.fourthAccountId}`);
-      
+
+      logWithTimestamp(
+        `Fourth account created with ID: ${this.fourthAccountId}`
+      );
+
       // Transfer tokens to the fourth account
       const transferTransaction = await createTokenTransfer(
         this.tokenId1,
@@ -667,19 +806,30 @@ Given(
         this.fourthAccountId,
         tokenAmount
       );
-      
-      await signAndExecuteTransaction(transferTransaction, clientPrivateKey, client);
-      
+
+      await signAndExecuteTransaction(
+        transferTransaction,
+        clientPrivateKey,
+        client
+      );
+
       // Verify token balance
-      const tokenBalance = await getTokenBalance(this.fourthAccountId, this.tokenId1);
+      const tokenBalance = await getTokenBalance(
+        this.fourthAccountId,
+        this.tokenId1
+      );
       assert.strictEqual(tokenBalance, tokenAmount);
-      
-      logWithTimestamp(`${tokenAmount} HTT tokens transferred to account ${this.fourthAccountId}`);
-      
+
+      logWithTimestamp(
+        `${tokenAmount} HTT tokens transferred to account ${this.fourthAccountId}`
+      );
+
       this.fourthAccountHbarBalance = hbarAmount;
       this.fourthAccountTokenBalance = tokenAmount;
     } catch (error: unknown) {
-      console.error(`Error setting up fourth account with tokens: ${(error as Error).message}`);
+      console.error(
+        `Error setting up fourth account with tokens: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -687,10 +837,20 @@ Given(
 
 When(
   /^A transaction is created to transfer (\d+) HTT tokens out of the first and second account and (\d+) HTT tokens into the third account and (\d+) HTT tokens into the fourth account$/,
-  async function (this: TokenContext, outAmount1: number, inAmount3: number, inAmount4: number) {
+  async function (
+    this: TokenContext,
+    outAmount1: number,
+    inAmount3: number,
+    inAmount4: number
+  ) {
     try {
-      if (!this.tokenId1 || !this.newAccountId || !this.secondAccountId || 
-          !this.thirdAccountId || !this.fourthAccountId) {
+      if (
+        !this.tokenId1 ||
+        !this.newAccountId ||
+        !this.secondAccountId ||
+        !this.thirdAccountId ||
+        !this.fourthAccountId
+      ) {
         throw new Error('Required account IDs or token ID is not defined');
       }
 
@@ -706,20 +866,27 @@ When(
         { accountId: this.newAccountId, amount: -outAmount1 },
         { accountId: this.secondAccountId, amount: -outAmount2 },
         { accountId: this.thirdAccountId, amount: inAmount3 },
-        { accountId: this.fourthAccountId, amount: inAmount4 }
+        { accountId: this.fourthAccountId, amount: inAmount4 },
       ];
-      
-      this.transferTransaction = await createMultiPartyTokenTransfer(this.tokenId1, transfers);
+
+      this.transferTransaction = await createMultiPartyTokenTransfer(
+        this.tokenId1,
+        transfers
+      );
 
       if (!this.secondAccountPrivateKey) {
         throw new Error('Second account private key is not defined');
       }
 
       // Sign with the second account's key (multi-signature transaction)
-      this.transferTransaction = await this.transferTransaction.sign(this.secondAccountPrivateKey);
+      this.transferTransaction = await this.transferTransaction.sign(
+        this.secondAccountPrivateKey
+      );
       logWithTimestamp('Transaction created and signed by second account');
     } catch (error: unknown) {
-      console.error(`Error creating multi-party transfer transaction: ${(error as Error).message}`);
+      console.error(
+        `Error creating multi-party transfer transaction: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -734,8 +901,11 @@ Then(
       }
 
       // Check the token balance using our service
-      const tokenBalance = await getTokenBalance(this.thirdAccountId, this.tokenId1);
-      
+      const tokenBalance = await getTokenBalance(
+        this.thirdAccountId,
+        this.tokenId1
+      );
+
       logWithTimestamp(`Third account token balance: ${tokenBalance}`);
       assert.strictEqual(
         tokenBalance,
@@ -743,7 +913,9 @@ Then(
         `Expected third account to hold ${expectedAmount} tokens, but got ${tokenBalance}`
       );
     } catch (error: unknown) {
-      console.error(`Error verifying third account token balance: ${(error as Error).message}`);
+      console.error(
+        `Error verifying third account token balance: ${(error as Error).message}`
+      );
       throw error;
     }
   }
@@ -758,8 +930,11 @@ Then(
       }
 
       // Check the token balance using our service
-      const tokenBalance = await getTokenBalance(this.fourthAccountId, this.tokenId1);
-      
+      const tokenBalance = await getTokenBalance(
+        this.fourthAccountId,
+        this.tokenId1
+      );
+
       logWithTimestamp(`Fourth account token balance: ${tokenBalance}`);
       assert.strictEqual(
         tokenBalance,
@@ -767,7 +942,9 @@ Then(
         `Expected fourth account to hold ${expectedAmount} tokens, but got ${tokenBalance}`
       );
     } catch (error: unknown) {
-      console.error(`Error verifying fourth account token balance: ${(error as Error).message}`);
+      console.error(
+        `Error verifying fourth account token balance: ${(error as Error).message}`
+      );
       throw error;
     }
   }
