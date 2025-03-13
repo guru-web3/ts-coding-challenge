@@ -1,87 +1,27 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import {
-  AccountBalanceQuery,
-  AccountCreateTransaction,
   AccountId,
-  Client,
   Hbar,
   KeyList,
   PrivateKey,
-  TopicCreateTransaction,
-  TopicMessageQuery,
-  TopicMessageSubmitTransaction,
-  TopicMessage,
-  Timestamp,
   TopicId,
-  Status,
+  Timestamp
 } from '@hashgraph/sdk';
-import { accounts } from '../../src/config';
 import assert from 'node:assert';
+import {  verifyAccountBalance } from '../../src/services/accountService';
+import { createTopic, publishMessage, waitForMessage , createAccount } from '../../src/services/topic';
+import { client, clientID, clientPrivateKey } from '../../src/utils/client';
+import { logWithTimestamp } from '../../src/utils/helpers';
 
 // Define interface for the test context to improve type safety
 interface TopicContext {
-  account?: AccountId;
-  privKey?: PrivateKey;
+  account: AccountId;
+  privKey: PrivateKey;
   secondAccount?: AccountId;
   secondAccountKey?: PrivateKey;
   thresholdKey?: KeyList;
-  topicId?: TopicId | null; // Using 'any' as TopicId isn't clearly imported in original code
-  messageTimestamp?: Timestamp | null; // Same reason as above
-}
-
-// Pre-configured client for test network (testnet)
-const client = Client.forTestnet();
-
-/**
- * Utility function to create a new account
- * @param privateKey - The private key for the new account
- * @param initialBalance - The initial balance for the new account
- * @returns An array containing [status, accountId]
- */
-async function createAccount(
-  privateKey: PrivateKey,
-  initialBalance: Hbar
-): Promise<[Status, AccountId | null]> {
-  try {
-    const transaction = new AccountCreateTransaction()
-      .setKey(privateKey.publicKey)
-      .setInitialBalance(initialBalance);
-
-    const response = await transaction.execute(client);
-    const receipt = await response.getReceipt(client);
-
-    return [receipt.status, receipt.accountId];
-  } catch (error: unknown) {
-    console.error(`Account creation failed: ${(error as Error).message}`);
-    throw error;
-  }
-}
-
-/**
- * Utility function to check account balance
- * @param accountId - The account ID to check balance for
- * @param expectedMinimum - The minimum expected balance
- * @returns The actual balance in hbars
- */
-async function verifyAccountBalance(
-  accountId: AccountId,
-  expectedMinimum: number
-): Promise<number> {
-  try {
-    const query = new AccountBalanceQuery().setAccountId(accountId);
-    const balance = await query.execute(client);
-    const balanceValue = balance.hbars.toBigNumber().toNumber();
-
-    assert.ok(
-      balanceValue > expectedMinimum,
-      `Account balance (${balanceValue}) is not greater than ${expectedMinimum} HBAR`
-    );
-
-    return balanceValue;
-  } catch (error: unknown) {
-    console.error(`Balance verification failed: ${(error as Error).message}`);
-    throw error;
-  }
+  topicId?: TopicId | null;
+  messageTimestamp?: Timestamp | null;
 }
 
 // Step definitions
@@ -89,24 +29,18 @@ Given(
   /^a first account with more than (\d+) hbars$/,
   async function (this: TopicContext, expectedBalance: number) {
     try {
-      const acc = accounts[0];
-      const account = AccountId.fromString(acc.id);
-      const privKey = PrivateKey.fromStringED25519(acc.privateKey);
-
-      // Set the account and key in the context
-      this.account = account;
-      this.privKey = privKey;
+      // Use the default account from config
+      this.account = clientID;
+      this.privKey = clientPrivateKey;
 
       // Set the operator for the client
-      client.setOperator(account, privKey);
+      client.setOperator(this.account, this.privKey);
 
       // Verify the account has sufficient balance
-      const balance = await verifyAccountBalance(account, expectedBalance);
-      console.log(`Using account ${account.toString()} with ${balance} HBAR`);
+      const balance = await verifyAccountBalance(this.account, expectedBalance);
+      logWithTimestamp(`Using account ${this.account.toString()} with ${balance} HBAR`);
     } catch (error: unknown) {
-      console.error(
-        `Error setting up first account: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error setting up first account: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -136,16 +70,14 @@ Given(
       this.secondAccountKey = secondAccountKey;
 
       // Log account details
-      console.log(
+      logWithTimestamp(
         `Second account created with ID: ${secondAccountId.toString()}, status ${accountStatus} and initial balance of ${initialBalance.toString()}`
       );
 
       // Verify the balance
       await verifyAccountBalance(secondAccountId, expectedBalance);
     } catch (error: unknown) {
-      console.error(
-        `Error setting up second account: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error setting up second account: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -157,16 +89,12 @@ Given(
     try {
       // Validate inputs
       if (totalKeys !== 2) {
-        throw new Error(
-          `This step is designed for 2 keys, but ${totalKeys} were specified`
-        );
+        throw new Error(`This step is designed for 2 keys, but ${totalKeys} were specified`);
       }
 
       // Ensure both account keys are available
       if (!this.privKey || !this.secondAccountKey) {
-        throw new Error(
-          'Keys for both first and second accounts must be set before this step'
-        );
+        throw new Error('Keys for both first and second accounts must be set before this step');
       }
 
       // Create the key list
@@ -174,13 +102,9 @@ Given(
 
       // Create the threshold key
       this.thresholdKey = new KeyList(keyList, threshold);
-      console.log(
-        `Threshold key ${threshold}/${totalKeys} created successfully`
-      );
+      logWithTimestamp(`Threshold key ${threshold}/${totalKeys} created successfully`);
     } catch (error: unknown) {
-      console.error(
-        `Error creating threshold key: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error creating threshold key: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -194,25 +118,12 @@ When(
         throw new Error('First account private key is not defined');
       }
 
-      // Create a new topic
-      const transaction = new TopicCreateTransaction()
-        .setTopicMemo(memo)
-        .setSubmitKey(this.privKey.publicKey);
-
-      // Sign and execute the transaction
-      const txResponse = await transaction.execute(client);
-
-      // Get the receipt and topic ID
-      const receipt = await txResponse.getReceipt(client);
-      this.topicId = receipt.topicId;
-
-      console.log(
-        `Created topic with ID: ${this.topicId?.toString()} and memo: "${memo}"`
-      );
+      // Create a new topic using the service
+      this.topicId = await createTopic(memo, this.privKey);
+      
+      logWithTimestamp(`Created topic with ID: ${this.topicId?.toString()} and memo: "${memo}"`);
     } catch (error: unknown) {
-      console.error(
-        `Error creating topic with first account: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error creating topic with first account: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -227,23 +138,12 @@ When(
         throw new Error('Threshold key must be created before this step');
       }
 
-      // Create the topic transaction
-      const transaction = new TopicCreateTransaction()
-        .setTopicMemo(memo)
-        .setSubmitKey(this.thresholdKey);
-
-      // Execute the transaction
-      const txResponse = await transaction.execute(client);
-      const receipt = await txResponse.getReceipt(client);
-      this.topicId = receipt.topicId;
-
-      console.log(
-        `Topic created with ID: ${this.topicId?.toString()} and memo: "${memo}"`
-      );
+      // Create a new topic using the service
+      this.topicId = await createTopic(memo, this.thresholdKey);
+      
+      logWithTimestamp(`Topic created with ID: ${this.topicId?.toString()} and memo: "${memo}"`);
     } catch (error: unknown) {
-      console.error(
-        `Error creating topic with threshold key: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error creating topic with threshold key: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -257,22 +157,12 @@ When(
         throw new Error('Topic ID is not defined');
       }
 
-      // Create and execute the message transaction
-      const transaction = new TopicMessageSubmitTransaction()
-        .setTopicId(this.topicId)
-        .setMessage(message);
-
-      const txResponse = await transaction.execute(client);
-      const receipt = await txResponse.getReceipt(client);
-
-      console.log(`Message transaction status: ${receipt.status.toString()}`);
-
-      // Store the timestamp for later verification
-      this.messageTimestamp = txResponse.transactionId.validStart;
+      // Publish message using the service
+      this.messageTimestamp = await publishMessage(this.topicId, message);
+      
+      logWithTimestamp(`Message published to topic at ${this.messageTimestamp?.toString()}`);
     } catch (error: unknown) {
-      console.error(
-        `Error publishing message to topic: ${(error as Error).message}`
-      );
+      logWithTimestamp(`Error publishing message to topic: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -289,45 +179,18 @@ Then(
         throw new Error('Topic ID is not defined');
       }
 
-      // Use promise to handle async message receiving with timeout
-      const receivedMessage = await new Promise<string>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('Timeout waiting for message'));
-        }, timeoutMs);
-
-        // Create the subscription with proper handlers
-        const subscription = new TopicMessageQuery()
-          .setTopicId(this.topicId!)
-          .setStartTime(startTime)
-          .subscribe(
-            client,
-            (error) => {
-              clearTimeout(timeout);
-              reject(error);
-            },
-            (message: TopicMessage) => {
-              const receivedMsg = Buffer.from(message.contents).toString(
-                'utf8'
-              );
-              console.log(
-                `${message.consensusTimestamp.toDate()} Received: ${receivedMsg}`
-              );
-
-              if (receivedMsg === expectedMessage) {
-                clearTimeout(timeout);
-                subscription.unsubscribe(); // Clean up the subscription
-                resolve(receivedMsg);
-              }
-            }
-          );
-      });
-
-      console.log(
-        `Successfully received expected message: "${receivedMessage}"`
+      // Wait for message using the service
+      const receivedMessage = await waitForMessage(
+        this.topicId,
+        expectedMessage,
+        startTime,
+        timeoutMs
       );
+
+      logWithTimestamp(`Successfully received expected message: "${receivedMessage}"`);
       assert.strictEqual(receivedMessage, expectedMessage);
     } catch (error: unknown) {
-      console.error(`Error receiving message: ${(error as Error).message}`);
+      logWithTimestamp(`Error receiving message: ${(error as Error).message}`);
       throw error;
     }
   }
